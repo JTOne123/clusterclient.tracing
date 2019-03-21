@@ -7,9 +7,15 @@ notests *default:
 
   install:
     - Vostok.ClusterClient.Tracing/bin/Release/netstandard2.0/Vostok.ClusterClient.Tracing.dll
+    - module vostok.tracing.abstractions
 
   deps:
     - vostok.devtools
+    - vostok.clusterclient.core
+    - vostok.clusterclient.context
+    - vostok.tracing.abstractions
+    - vostok.tracing.extensions
+    - vostok.logging.abstractions
 
 full-build > notests:
   build:
