@@ -15,7 +15,6 @@ notests *default:
     - vostok.clusterclient.context
     - vostok.tracing.abstractions
     - vostok.tracing.extensions
-    - vostok.logging.abstractions
 
 full-build > notests:
   build:

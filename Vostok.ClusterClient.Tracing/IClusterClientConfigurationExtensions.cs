@@ -1,0 +1,34 @@
+﻿using JetBrains.Annotations;
+using Vostok.Clusterclient.Context;
+using Vostok.Clusterclient.Core;
+using Vostok.Tracing.Abstractions;
+
+namespace Vostok.Clusterclient.Tracing
+{
+    [PublicAPI]
+    public static class IClusterClientConfigurationExtensions
+    {
+        /// <summary>
+        /// Sets up distributed tracing of HTTP requests using given <paramref name="tracer"/>.
+        /// </summary>
+        public static void SetupTracing([NotNull] this IClusterClientConfiguration config, [NotNull] ITracer tracer)
+        {
+            config.SetupDistributedContext();
+
+            var tracingTransport = new TracingTransport(config.Transport, tracer)
+            {
+                TargetServiceProvider = () => config.TargetServiceName,
+                TargetEnvironmentProvider = () => config.TargetEnvironment
+            };
+
+            var tracingModule = new TracingModule(tracer)
+            {
+                TargetServiceProvider = () => config.TargetServiceName,
+                TargetEnvironmentProvider = () => config.TargetEnvironment
+            };
+
+            config.Transport = tracingTransport;
+            config.AddRequestModule(tracingModule, typeof(DistributedContextModule));
+        }
+    }
+}
