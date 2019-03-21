@@ -1,0 +1,17 @@
+notests *default:
+  build:
+    target: Vostok.ClusterClient.Tracing.sln
+    configuration: NoTests
+    tool:
+      name: dotnet
+
+  install:
+    - Vostok.ClusterClient.Tracing/bin/Release/netstandard2.0/Vostok.ClusterClient.Tracing.dll
+
+  deps:
+    - vostok.devtools
+
+full-build > notests:
+  build:
+    target: Vostok.ClusterClient.Tracing.sln
+    configuration: Release
