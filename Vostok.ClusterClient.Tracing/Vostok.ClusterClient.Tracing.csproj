@@ -8,6 +8,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release</Configurations>
     <LangVersion>7.2</LangVersion>
+    <RootNamespace>Vostok.Clusterclient.Tracing</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -23,6 +24,7 @@
     <PackageProjectUrl>https://github.com/vostok/clusterclient.tracing</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/vostok/clusterclient.tracing/blob/master/LICENSE</PackageLicenseUrl>
     <PackageTags>vostok vostok.clusterclient vostok.tracing</PackageTags>
+    <PackageReleaseNotes>https://github.com/vostok/clusterclient.tracing/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/vostok/clusterclient.tracing</RepositoryUrl>
   </PropertyGroup>
   
