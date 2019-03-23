@@ -1,25 +1,20 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <Import Project="..\..\vostok.devtools\library-common-props\Main-Project.props" />
   <Import Project="..\..\vostok.devtools\git-commit-to-assembly-title\Vostok.Tools.GitCommit2AssemblyTitle.props" />
-
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release</Configurations>
     <LangVersion>7.2</LangVersion>
     <RootNamespace>Vostok.Clusterclient.Tracing</RootNamespace>
   </PropertyGroup>
-
   <PropertyGroup>
-    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionPrefix>0.1.1</VersionPrefix>
   </PropertyGroup>
-
   <PropertyGroup>
     <Title>Vostok.ClusterClient.Tracing</Title>
     <Description>Distributed tracing module for ClusterClient.</Description>
   </PropertyGroup>
-
   <PropertyGroup>
     <PackageProjectUrl>https://github.com/vostok/clusterclient.tracing</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/vostok/clusterclient.tracing/blob/master/LICENSE</PackageLicenseUrl>
@@ -27,7 +22,6 @@
     <PackageReleaseNotes>https://github.com/vostok/clusterclient.tracing/blob/master/CHANGELOG.md</PackageReleaseNotes>
     <RepositoryUrl>https://github.com/vostok/clusterclient.tracing</RepositoryUrl>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="Vostok.Tracing.Abstractions">
       <SpecificVersion>False</SpecificVersion>
@@ -46,5 +40,4 @@
       <HintPath>..\..\vostok.clusterclient.context\Vostok.ClusterClient.Context\bin\Release\netstandard2.0\Vostok.ClusterClient.Context.dll</HintPath>
     </Reference>
   </ItemGroup>
-  
 </Project>
