@@ -42,12 +42,6 @@ namespace Vostok.Clusterclient.Tracing
                     var strategy = context.Parameters.Strategy;
                     if (strategy != null)
                         spanBuilder.SetClusterStrategy(strategy.ToString());
-
-                    if (!string.IsNullOrEmpty(config.AdditionalTraceIdHeader))
-                        context.Request = context.Request.WithHeader(config.AdditionalTraceIdHeader, traceContext.TraceId);
-
-                    if (!string.IsNullOrEmpty(config.AdditionalSpanIdHeader))
-                        context.Request = context.Request.WithHeader(config.AdditionalSpanIdHeader, traceContext.SpanId);
                 }
 
                 var result = await next(context).ConfigureAwait(false);

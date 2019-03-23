@@ -16,12 +16,12 @@ namespace Vostok.Clusterclient.Tracing
     public class TracingTransport : ITransport
     {
         private readonly ITransport transport;
-        private readonly ITracer tracer;
+        private readonly TracingConfiguration configuration;
 
-        public TracingTransport([NotNull] ITransport transport, [NotNull] ITracer tracer)
+        public TracingTransport([NotNull] ITransport transport, [NotNull] TracingConfiguration configuration)
         {
             this.transport = transport ?? throw new ArgumentNullException(nameof(transport));
-            this.tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
+            this.configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public TransportCapabilities Capabilities => transport.Capabilities;
@@ -34,14 +34,20 @@ namespace Vostok.Clusterclient.Tracing
 
         public async Task<Response> SendAsync(Request request, TimeSpan? connectionTimeout, TimeSpan timeout, CancellationToken cancellationToken)
         {
-            using (var spanBuilder = tracer.BeginHttpClientSpan())
+            using (var spanBuilder = configuration.Tracer.BeginHttpClientSpan())
             {
-                var traceContext = tracer.CurrentContext;
+                var traceContext = configuration.Tracer.CurrentContext;
                 if (traceContext != null)
                 {
                     spanBuilder.SetTargetDetails(TargetServiceProvider?.Invoke(), TargetEnvironmentProvider?.Invoke());
                     spanBuilder.SetRequestDetails(request);
                     spanBuilder.SetAnnotation(WellKnownAnnotations.Common.Component, Constants.Component);
+
+                    if (!string.IsNullOrEmpty(configuration.AdditionalTraceIdHeader))
+                        request = request.WithHeader(configuration.AdditionalTraceIdHeader, traceContext.TraceId);
+
+                    if (!string.IsNullOrEmpty(configuration.AdditionalSpanIdHeader))
+                        request = request.WithHeader(configuration.AdditionalSpanIdHeader, traceContext.SpanId);
                 }
 
                 var response = await transport

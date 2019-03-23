@@ -20,3 +20,8 @@ full-build > notests:
   build:
     target: Vostok.ClusterClient.Tracing.sln
     configuration: Release
+
+  deps:
+    - vostok.context
+    - vostok.tracing
+    - vostok.logging.abstractions
