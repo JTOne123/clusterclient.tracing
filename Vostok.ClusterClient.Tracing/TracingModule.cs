@@ -15,11 +15,11 @@ namespace Vostok.Clusterclient.Tracing
     [PublicAPI]
     public class TracingModule : IRequestModule
     {
-        private readonly ITracer tracer;
+        private readonly TracingConfiguration config;
 
-        public TracingModule([NotNull] ITracer tracer)
+        public TracingModule([NotNull] TracingConfiguration config)
         {
-            this.tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
+            this.config = config ?? throw new ArgumentNullException(nameof(config));
         }
 
         [CanBeNull]
@@ -30,20 +30,33 @@ namespace Vostok.Clusterclient.Tracing
 
         public async Task<ClusterResult> ExecuteAsync(IRequestContext context, Func<IRequestContext, Task<ClusterResult>> next)
         {
-            using (var spanBuilder = tracer.BeginHttpClusterSpan())
+            using (var spanBuilder = config.Tracer.BeginHttpClusterSpan())
             {
-                spanBuilder.SetTargetDetails(TargetServiceProvider?.Invoke(), TargetEnvironmentProvider?.Invoke());
-                spanBuilder.SetRequestDetails(context.Request);
-                spanBuilder.SetAnnotation(WellKnownAnnotations.Common.Component, Constants.Component);
+                var traceContext = config.Tracer.CurrentContext;
+                if (traceContext != null)
+                {
+                    spanBuilder.SetTargetDetails(TargetServiceProvider?.Invoke(), TargetEnvironmentProvider?.Invoke());
+                    spanBuilder.SetRequestDetails(context.Request);
+                    spanBuilder.SetAnnotation(WellKnownAnnotations.Common.Component, Constants.Component);
 
-                var strategy = context.Parameters.Strategy;
-                if (strategy != null)
-                    spanBuilder.SetClusterStrategy(strategy.ToString());
+                    var strategy = context.Parameters.Strategy;
+                    if (strategy != null)
+                        spanBuilder.SetClusterStrategy(strategy.ToString());
+
+                    if (!string.IsNullOrEmpty(config.AdditionalTraceIdHeader))
+                        context.Request = context.Request.WithHeader(config.AdditionalTraceIdHeader, traceContext.TraceId);
+
+                    if (!string.IsNullOrEmpty(config.AdditionalSpanIdHeader))
+                        context.Request = context.Request.WithHeader(config.AdditionalSpanIdHeader, traceContext.SpanId);
+                }
 
                 var result = await next(context).ConfigureAwait(false);
 
-                spanBuilder.SetResponseDetails(result.Response);
-                spanBuilder.SetClusterStatus(result.Status.ToString());
+                if (traceContext != null)
+                {
+                    spanBuilder.SetResponseDetails(result.Response);
+                    spanBuilder.SetClusterStatus(result.Status.ToString());
+                }
 
                 return result;
             }

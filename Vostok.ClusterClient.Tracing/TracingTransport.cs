@@ -36,15 +36,22 @@ namespace Vostok.Clusterclient.Tracing
         {
             using (var spanBuilder = tracer.BeginHttpClientSpan())
             {
-                spanBuilder.SetTargetDetails(TargetServiceProvider?.Invoke(), TargetEnvironmentProvider?.Invoke());
-                spanBuilder.SetRequestDetails(request);
-                spanBuilder.SetAnnotation(WellKnownAnnotations.Common.Component, Constants.Component);
+                var traceContext = tracer.CurrentContext;
+                if (traceContext != null)
+                {
+                    spanBuilder.SetTargetDetails(TargetServiceProvider?.Invoke(), TargetEnvironmentProvider?.Invoke());
+                    spanBuilder.SetRequestDetails(request);
+                    spanBuilder.SetAnnotation(WellKnownAnnotations.Common.Component, Constants.Component);
+                }
 
                 var response = await transport
                     .SendAsync(request, connectionTimeout, timeout, cancellationToken)
                     .ConfigureAwait(false);
 
-                spanBuilder.SetResponseDetails(response);
+                if (traceContext != null)
+                {
+                    spanBuilder.SetResponseDetails(response);
+                }
 
                 return response;
             }

@@ -12,16 +12,22 @@ namespace Vostok.Clusterclient.Tracing
         /// Sets up distributed tracing of HTTP requests using given <paramref name="tracer"/>.
         /// </summary>
         public static void SetupTracing([NotNull] this IClusterClientConfiguration config, [NotNull] ITracer tracer)
+            => SetupTracing(config, new TracingConfiguration(tracer));
+
+        /// <summary>
+        /// Sets up distributed tracing of HTTP requests using given <paramref name="configuration"/>.
+        /// </summary>
+        public static void SetupTracing([NotNull] this IClusterClientConfiguration config, [NotNull] TracingConfiguration configuration)
         {
             config.SetupDistributedContext();
 
-            var tracingTransport = new TracingTransport(config.Transport, tracer)
+            var tracingTransport = new TracingTransport(config.Transport, configuration.Tracer)
             {
                 TargetServiceProvider = () => config.TargetServiceName,
                 TargetEnvironmentProvider = () => config.TargetEnvironment
             };
 
-            var tracingModule = new TracingModule(tracer)
+            var tracingModule = new TracingModule(configuration)
             {
                 TargetServiceProvider = () => config.TargetServiceName,
                 TargetEnvironmentProvider = () => config.TargetEnvironment
