@@ -1,5 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Vostok.Clusterclient.Core.Model;
 using Vostok.Tracing.Abstractions;
 
 namespace Vostok.Clusterclient.Tracing
@@ -16,15 +17,9 @@ namespace Vostok.Clusterclient.Tracing
         public ITracer Tracer { get; }
 
         /// <summary>
-        /// If set to a non-null value, an additional header with this name and the value of <see cref="TraceContext"/>'s <see cref="TraceContext.TraceId"/> will be added to requests.
+        /// If set to a non-null value, an additional request transformation will be called with current <see cref="TraceContext"/>.
         /// </summary>
         [CanBeNull]
-        public string AdditionalTraceIdHeader { get; set; }
-
-        /// <summary>
-        /// If set to a non-null value, an additional header with this name and the value of <see cref="TraceContext"/>'s <see cref="TraceContext.SpanId"/> will be added to requests.
-        /// </summary>
-        [CanBeNull]
-        public string AdditionalSpanIdHeader { get; set; }
+        public Func<Request, TraceContext, Request> AdditionalRequestTransformation { get; set; }
     }
 }

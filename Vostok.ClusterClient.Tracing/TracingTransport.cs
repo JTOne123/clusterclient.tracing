@@ -43,11 +43,8 @@ namespace Vostok.Clusterclient.Tracing
                     spanBuilder.SetRequestDetails(request);
                     spanBuilder.SetAnnotation(WellKnownAnnotations.Common.Component, Constants.Component);
 
-                    if (!string.IsNullOrEmpty(configuration.AdditionalTraceIdHeader))
-                        request = request.WithHeader(configuration.AdditionalTraceIdHeader, traceContext.TraceId);
-
-                    if (!string.IsNullOrEmpty(configuration.AdditionalSpanIdHeader))
-                        request = request.WithHeader(configuration.AdditionalSpanIdHeader, traceContext.SpanId);
+                    if (configuration.AdditionalRequestTransformation != null)
+                        request = configuration.AdditionalRequestTransformation(request, traceContext);
                 }
 
                 var response = await transport

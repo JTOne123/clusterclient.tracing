@@ -47,8 +47,10 @@ namespace Vostok.Clusterclient.Tracing.Tests
 
                     config.SetupDistributedTracing(new TracingConfiguration(tracer)
                     {
-                        AdditionalTraceIdHeader = "traceId",
-                        AdditionalSpanIdHeader = "spanId"
+                        AdditionalRequestTransformation = 
+                            (request, context) => request
+                                .WithHeader("traceId", context.TraceId.ToString())
+                                .WithHeader("spanId", context.SpanId.ToString())
                     });
                 });
         }
