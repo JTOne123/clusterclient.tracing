@@ -17,7 +17,7 @@ namespace Vostok.Clusterclient.Tracing
         public ITracer Tracer { get; }
 
         /// <summary>
-        /// If set to a non-null value, an additional request transformation will be called with current <see cref="TraceContext"/>.
+        /// If set to a non-null value, an additional request transformation will be applied to given <see cref="Request"/> with current <see cref="TraceContext"/>.
         /// </summary>
         [CanBeNull]
         public Func<Request, TraceContext, Request> AdditionalRequestTransformation { get; set; }
