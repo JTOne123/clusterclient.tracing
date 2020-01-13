@@ -10,8 +10,11 @@ notests *default:
     - module vostok.tracing.abstractions
 
   deps:
+    - vostok.logging.tracing
+    - vostok.logging.context
+    - vostok.logging.abstractions
     - vostok.devtools
-    - vostok.clusterclient.core
+    - vostok.clusterclient.core@request-sender-customization
     - vostok.clusterclient.context
     - vostok.tracing.abstractions
     - vostok.tracing.extensions

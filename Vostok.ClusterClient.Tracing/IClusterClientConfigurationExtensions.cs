@@ -20,11 +20,18 @@ namespace Vostok.Clusterclient.Tracing
         public static void SetupDistributedTracing([NotNull] this IClusterClientConfiguration config, [NotNull] TracingConfiguration configuration)
         {
             config.SetupDistributedContext();
-
-            var tracingTransport = new TracingTransport(config.Transport, configuration)
+            
+            config.RequestSenderCustomization = sender =>
             {
-                TargetServiceProvider = () => config.TargetServiceName,
-                TargetEnvironmentProvider = () => config.TargetEnvironment
+                var previous = config.RequestSenderCustomization;
+                if (previous != null)
+                    sender = previous(sender);
+
+                return new TracingRequestSender(sender, configuration)
+                {
+                    TargetServiceProvider = () => config.TargetServiceName,
+                    TargetEnvironmentProvider = () => config.TargetEnvironment
+                };
             };
 
             var tracingModule = new TracingModule(configuration)
@@ -33,7 +40,6 @@ namespace Vostok.Clusterclient.Tracing
                 TargetEnvironmentProvider = () => config.TargetEnvironment
             };
 
-            config.Transport = tracingTransport;
             config.AddRequestModule(tracingModule, typeof(DistributedContextModule));
         }
     }
