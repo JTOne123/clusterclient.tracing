@@ -20,10 +20,11 @@ namespace Vostok.Clusterclient.Tracing
         public static void SetupDistributedTracing([NotNull] this IClusterClientConfiguration config, [NotNull] TracingConfiguration configuration)
         {
             config.SetupDistributedContext();
+
+            var previous = config.RequestSenderCustomization;
             
             config.RequestSenderCustomization = sender =>
             {
-                var previous = config.RequestSenderCustomization;
                 if (previous != null)
                     sender = previous(sender);
 
