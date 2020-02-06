@@ -16,9 +16,9 @@ namespace Vostok.Clusterclient.Tracing
         }
 
         public static void SetResponseDetails(this IHttpRequestSpanBuilder builder, Response response)
-            => builder.SetResponseDetails((int)response.Code, ContentLength(response));
+            => builder.SetResponseDetails((int)response.Code, GetContentLength(response));
 
-        private static long? ContentLength(Response response)
+        private static long? GetContentLength(Response response)
         {
             if (response.HasContent)
                 return response.Content.Length;
